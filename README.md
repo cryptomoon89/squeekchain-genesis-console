@@ -10,6 +10,12 @@
 
 ---
 
+## 📸 Preview & Features
+
+![Squeekchain Genesis Console Preview](preview.png)
+
+---
+
 ## 🚀 Live Demo
 
 🎮 **Try the Live Web Console:** [https://cryptomoon89.github.io/squeekchain-genesis-console/](https://cryptomoon89.github.io/squeekchain-genesis-console/)

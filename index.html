@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Squeekchain Genesis Console & Ecosystem Hub</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Pixel Art Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        pixel: ['"Press Start 2P"', 'cursive'],
+                        vt: ['"VT323"', 'monospace'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        sqk: {
+                            50: '#fffbe6',
+                            100: '#fff3b8',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            900: '#78350f',
+                        },
+                        cyber: {
+                            bg: '#070a12',
+                            card: '#0e1424',
+                            border: '#f59e0b',
+                            neon: '#06b6d4',
+                            purple: '#a855f7',
+                            rose: '#f43f5e'
+                        }
+                    },
+                    animation: {
+                        'spin-slow': 'spin 12s linear infinite',
+                        'spin-fast': 'spin 0.8s linear infinite',
+                        'pulse-glow': 'pulseGlow 2s infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
+                            '50%': { opacity: '0.8', transform: 'scale(1.05)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-6px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050811;
+            color: #F3F4F6;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.05) 0%, transparent 60%),
+                linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 20px 20px, 20px 20px;
+        }
+
+        /* CRT Filter Overlay */
+        .crt-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* Pixel Art Border & UI Containers */
+        .pixel-card {
+            background: #0d1322;
+            border: 4px solid #1e293b;
+            box-shadow: 
+                inset -4px -4px 0px 0px #060913,
+                inset 4px 4px 0px 0px #1e293b,
+                6px 6px 0px 0px #02040a;
+            position: relative;
+        }
+
+        .pixel-card-gold {
+            background: #13192b;
+            border: 4px solid #f59e0b;
+            box-shadow: 
+                inset -4px -4px 0px 0px #78350f,
+                inset 4px 4px 0px 0px #fcd34d,
+                0 0 15px rgba(245, 158, 11, 0.3),
+                6px 6px 0px 0px #02040a;
+        }
+
+        .pixel-btn {
+            border: 3px solid #000;
+            box-shadow: inset -3px -3px 0px 0px rgba(0,0,0,0.4), inset 3px 3px 0px 0px rgba(255,255,255,0.3), 4px 4px 0px 0px #000;
+            image-rendering: pixelated;
+            font-family: 'Press Start 2P', cursive;
+            letter-spacing: -0.5px;
+        }
+
+        .pixel-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: inset -2px -2px 0px 0px rgba(0,0,0,0.4), inset 2px 2px 0px 0px rgba(255,255,255,0.3), 2px 2px 0px 0px #000;
+        }
+
+        .font-pixel {
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .font-vt {
+            font-family: 'VT323', monospace;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #070a12; }
+        ::-webkit-scrollbar-thumb { background: #f59e0b; border: 2px solid #000; }
+        
+        .tab-btn.active {
+            background: #f59e0b !important;
+            color: #000 !important;
+            border-color: #fff !important;
+            box-shadow: 3px 3px 0px #000 !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative">
+    
+    <!-- Retro CRT Filter Scanlines -->
+    <div class="crt-overlay"></div>
+
+    <!-- TOP NAVIGATION -->
+    <header class="sticky top-0 z-50 bg-slate-950/90 border-b-4 border-amber-500 px-4 md:px-8 py-3 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            
+            <!-- Brand -->
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-amber-500 border-4 border-black flex items-center justify-center text-2xl shadow-[4px_4px_0px_#000] animate-bounce">
+                    🐹
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-pixel text-lg tracking-wider text-amber-400 drop-shadow-[2px_2px_0px_#000]">
+                            SQUEEKCHAIN
+                        </h1>
+                        <span class="text-[9px] font-pixel px-2 py-1 bg-amber-500 text-black font-bold border-2 border-black">GENESIS</span>
+                    </div>
+                    <p class="text-sm text-cyan-400 font-vt tracking-widest uppercase">>>> Proof-of-Distance Arcade Engine</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="flex items-center gap-2 bg-slate-900 p-1.5 border-4 border-black text-xs overflow-x-auto max-w-full font-pixel">
+                <button onclick="switchTab('oracle')" id="tab-oracle" class="tab-btn active px-3 py-2 border-2 border-black bg-slate-800 text-amber-400 hover:text-white transition-all flex items-center gap-1 whitespace-nowrap">
+                    <span>⚡ ORACLE</span>
+                </button>
+                <button onclick="switchTab('squeekfi')" id="tab-squeekfi" class="tab-btn px-3 py-2 border-2 border-transparent text-gray-400 hover:text-white transition-all flex items-center gap-1 whitespace-nowrap">
+                    <span>📈 SQUEEKFI</span>
+                </button>
+                <button onclick="switchTab('nft')" id="tab-nft" class="tab-btn px-3 py-2 border-2 border-transparent text-gray-400 hover:text-white transition-all flex items-center gap-1 whitespace-nowrap">
+                    <span>🧬 NFT</span>
+                </button>
+                <button onclick="switchTab('overlay')" id="tab-overlay" class="tab-btn px-3 py-2 border-2 border-transparent text-gray-400 hover:text-white transition-all flex items-center gap-1 whitespace-nowrap">
+                    <span>🎥 OVERLAY</span>
+                </button>
+                <button onclick="switchTab('vault')" id="tab-vault" class="tab-btn px-3 py-2 border-2 border-transparent text-gray-400 hover:text-white transition-all flex items-center gap-1 whitespace-nowrap">
+                    <span>🧰 VAULT</span>
+                </button>
+                <button onclick="switchTab('submit')" id="tab-submit" class="tab-btn px-3 py-2 border-2 border-amber-500 text-amber-400 bg-amber-500/20 hover:bg-amber-500 hover:text-black transition-all flex items-center gap-1 whitespace-nowrap">
+                    <span>📝 SUBMIT</span>
+                </button>
+            </nav>
+
+            <!-- Wallet / Balance Widget -->
+            <div class="flex items-center gap-3">
+                <div class="bg-black border-2 border-amber-500 px-3 py-1 text-right shadow-[3px_3px_0px_#f59e0b]">
+                    <p class="text-[10px] text-gray-400 font-pixel uppercase">SQK TOKEN</p>
+                    <p class="font-pixel text-sm text-amber-400 flex items-center gap-1">
+                        <span id="sqkBalance">1,250</span> <span class="text-[9px]">SQK</span>
+                    </p>
+                </div>
+                <button onclick="faucetClaim()" class="pixel-btn px-3 py-2 text-xs font-bold bg-amber-500 hover:bg-amber-400 text-black transition-all">
+                    + FAUCET
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto w-full px-4 md:px-8 py-6 flex-grow">
+
+        <!-- TAB 1: GENESIS ORACLE & LIVE RUNNER -->
+        <div id="view-oracle" class="tab-view space-y-6">
+            
+            <!-- Telemetry Stats Bar -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="pixel-card p-4 flex flex-col justify-between">
+                    <span class="text-xs text-cyan-400 font-pixel">BLOCK HEIGHT</span>
+                    <span class="text-3xl font-vt font-bold text-amber-400 mt-1" id="blockHeight">#1,048</span>
+                    <span class="text-xs text-emerald-400 font-vt flex items-center gap-1">● NODE RUNNING</span>
+                </div>
+                <div class="pixel-card p-4 flex flex-col justify-between">
+                    <span class="text-xs text-cyan-400 font-pixel">TOTAL DISTANCE</span>
+                    <span class="text-3xl font-vt font-bold text-cyan-300 mt-1"><span id="lifetimeMeters">342</span><span class="text-lg text-gray-400"> m</span></span>
+                    <span class="text-xs text-gray-400 font-vt">ROTATIONS: <span id="wheelRotations">1,140</span></span>
+                </div>
+                <div class="pixel-card p-4 flex flex-col justify-between">
+                    <span class="text-xs text-cyan-400 font-pixel">LAST RUN</span>
+                    <span class="text-3xl font-vt font-bold text-purple-400 mt-1"><span id="lastRunMeters">68</span><span class="text-lg text-gray-400"> m</span></span>
+                    <span class="text-xs text-amber-400 font-vt" id="difficultyLabel">DIFFICULTY: 1.42x</span>
+                </div>
+                <div class="pixel-card p-4 flex flex-col justify-between">
+                    <span class="text-xs text-cyan-400 font-pixel">STATUS</span>
+                    <span class="text-xl font-vt font-bold text-emerald-400 mt-1 flex items-center gap-2" id="hamsterMoodState">
+                        <span class="w-3 h-3 bg-emerald-400 animate-ping"></span> HIGH ENERGY
+                    </span>
+                    <span class="text-xs text-gray-400 font-vt" id="avgSpeed">PACE: 4.8 m/s</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Hamster Wheel Interactive Rig -->
+                <div class="lg:col-span-2 pixel-card-gold p-6 md:p-8 flex flex-col justify-between relative overflow-hidden">
+                    <div class="flex justify-between items-center mb-4 z-10">
+                        <div>
+                            <h2 class="text-lg font-pixel text-amber-300 flex items-center gap-2 drop-shadow-[2px_2px_0px_#000]">
+                                🎡 PIXEL WHEEL RIG #01
+                            </h2>
+                            <p class="text-xs text-cyan-300 font-vt tracking-wider">Proof-of-Distance IoT Telemetry Wheel</p>
+                        </div>
+                        <div>
+                            <button id="autoRunBtn" onclick="toggleAutoRun()" class="pixel-btn px-3 py-1.5 bg-slate-800 text-xs text-white flex items-center gap-2">
+                                <span id="autoRunDot" class="w-3 h-3 bg-rose-500"></span>
+                                <span id="autoRunText" class="font-pixel text-[10px]">AUTO: OFF</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Canvas Wheel Rig -->
+                    <div class="relative py-8 flex flex-col items-center justify-center min-h-[260px] z-10">
+                        <!-- Wheel Visual -->
+                        <div class="relative w-52 h-52 md:w-60 md:h-60 flex items-center justify-center bg-black/60 rounded-full border-8 border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.5)]">
+                            <!-- Rotating Outer Rim -->
+                            <div id="wheelOuterRim" class="absolute inset-0 rounded-full border-[12px] border-dashed border-cyan-400 animate-spin-slow transition-all duration-300"></div>
+                            <div id="wheelInnerRim" class="absolute inset-3 rounded-full border-4 border-slate-700"></div>
+                            
+                            <!-- Central Axis -->
+                            <div class="absolute w-10 h-10 bg-amber-400 border-4 border-black flex items-center justify-center shadow-lg z-20">
+                                <div class="w-3 h-3 bg-black"></div>
+                            </div>
+                            
+                            <!-- Pixel Hamster Sprite -->
+                            <div id="hamsterSprite" class="text-7xl md:text-8xl transition-transform duration-300 transform drop-shadow-[4px_4px_0px_#000] z-10">
+                                🐹
+                            </div>
+                        </div>
+
+                        <!-- Real-time Speed Meter -->
+                        <div class="w-full max-w-md mt-6">
+                            <div class="flex justify-between text-sm font-vt text-gray-300 mb-1">
+                                <span>CADENCE: <span id="cadenceValue" class="text-amber-400 font-bold">0 RPM</span></span>
+                                <span>SPEED: <span id="speedValue" class="text-cyan-400 font-bold">0.0 m/s</span></span>
+                            </div>
+                            <div class="w-full h-5 bg-black border-2 border-white p-0.5">
+                                <div id="speedProgressBar" class="h-full bg-gradient-to-r from-amber-500 via-orange-500 to-cyan-400 w-0 transition-all duration-300"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Control Bar -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 z-10">
+                        <button id="mineBlockBtn" onclick="triggerBlockRun()" class="pixel-btn py-4 bg-amber-500 hover:bg-amber-400 text-black text-sm font-bold shadow-[4px_4px_0px_#000] flex items-center justify-center gap-2">
+                            <span>⚡ SPRINT & MINE BLOCK</span>
+                        </button>
+                        <button onclick="feedTreat()" class="pixel-btn py-4 bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-bold border-2 border-amber-500 flex items-center justify-center gap-2">
+                            <span>🌻 FEED SUNFLOWER SEED (+BOOST)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Oracle Logs & Narrative Stream -->
+                <div class="pixel-card p-6 flex flex-col justify-between h-[480px]">
+                    <div class="flex items-center justify-between mb-4 border-b-2 border-slate-800 pb-3">
+                        <h3 class="font-pixel text-xs text-amber-400 flex items-center gap-2">
+                            <span class="w-2 h-2 bg-emerald-400 animate-ping"></span>
+                            ORACLE NARRATIVE MATRIX
+                        </h3>
+                    </div>
+
+                    <div id="oracleLogFeed" class="flex-grow overflow-y-auto space-y-3 font-vt text-lg pr-1 leading-snug">
+                        <!-- Log messages populated dynamically -->
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t-2 border-slate-800 flex items-center justify-between text-xs font-vt text-gray-400">
+                        <span>NODE: #0042 (CONNECTED)</span>
+                        <button onclick="clearLogs()" class="hover:text-amber-400 underline">CLEAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: SQUEEKFI PREDICTION MARKET -->
+        <div id="view-squeekfi" class="tab-view hidden space-y-6">
+            <div class="pixel-card-gold p-6 md:p-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-xl font-pixel text-cyan-400 drop-shadow-[2px_2px_0px_#000]">
+                                SQUEEKFI PREDICTION MARKET
+                            </h2>
+                            <span class="px-2 py-0.5 bg-cyan-500 text-black font-pixel text-[9px] font-bold">2.0X MULTIPLIER</span>
+                        </div>
+                        <p class="text-lg text-gray-300 font-vt mt-1">Bet SQK tokens on whether the hamster's next block run distance is LOW (&lt;50m) or HIGH (&ge;50m).</p>
+                    </div>
+                    
+                    <div class="bg-black border-2 border-cyan-400 p-4 flex items-center gap-6 shadow-[4px_4px_0px_#06b6d4]">
+                        <div>
+                            <p class="text-[10px] text-gray-400 font-pixel uppercase">TOTAL POOL</p>
+                            <p class="text-2xl font-vt font-bold text-cyan-300" id="totalPoolStaked">4,850 SQK</p>
+                        </div>
+                        <div class="h-8 w-1 bg-slate-800"></div>
+                        <div>
+                            <p class="text-[10px] text-gray-400 font-pixel uppercase">WIN RATE</p>
+                            <p class="text-2xl font-vt font-bold text-emerald-400" id="userWinRatio">64%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Step 1: Wager Selector -->
+                    <div class="pixel-card p-6 flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-pixel text-xs text-white mb-4 flex items-center gap-2">
+                                <span class="w-6 h-6 bg-cyan-500 text-black text-xs font-bold flex items-center justify-center">1</span>
+                                SELECT STAKE
+                            </h3>
+                            
+                            <div class="grid grid-cols-3 gap-3 mb-4">
+                                <button onclick="setBetAmount(25)" id="bet-25" class="pixel-btn bet-amt-btn py-3 bg-slate-800 text-xs hover:bg-cyan-500 hover:text-black">25 SQK</button>
+                                <button onclick="setBetAmount(50)" id="bet-50" class="pixel-btn bet-amt-btn py-3 bg-slate-800 text-xs hover:bg-cyan-500 hover:text-black">50 SQK</button>
+                                <button onclick="setBetAmount(100)" id="bet-100" class="pixel-btn bet-amt-btn py-3 bg-slate-800 text-xs hover:bg-cyan-500 hover:text-black">100 SQK</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-black p-4 border-2 border-slate-700">
+                            <p class="text-sm font-vt text-gray-300 flex justify-between">
+                                <span>ESTIMATED PAYOUT:</span>
+                                <span class="text-amber-400 font-bold" id="estPayoutText">100 SQK</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Prediction Choices -->
+                    <div class="lg:col-span-2 pixel-card p-6 flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-pixel text-xs text-white mb-4 flex items-center gap-2">
+                                <span class="w-6 h-6 bg-cyan-500 text-black text-xs font-bold flex items-center justify-center">2</span>
+                                LOCK PREDICTION
+                            </h3>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <button onclick="placePrediction('low')" id="btnBetLow" class="pixel-btn p-6 bg-slate-900 hover:bg-cyan-950 border-2 border-cyan-500 flex flex-col items-center gap-2 group">
+                                    <span class="text-4xl group-hover:scale-110 transition-transform">🐢</span>
+                                    <span class="font-pixel text-sm text-cyan-300">PREDICT LOW</span>
+                                    <span class="text-xs font-vt text-gray-400">&lt; 50 METERS • ODDS 1.95X</span>
+                                </button>
+
+                                <button onclick="placePrediction('high')" id="btnBetHigh" class="pixel-btn p-6 bg-slate-900 hover:bg-rose-950 border-2 border-rose-500 flex flex-col items-center gap-2 group">
+                                    <span class="text-4xl group-hover:scale-110 transition-transform">🚀</span>
+                                    <span class="font-pixel text-sm text-rose-300">PREDICT HIGH</span>
+                                    <span class="text-xs font-vt text-gray-400">&ge; 50 METERS • ODDS 2.05X</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Active Bet Status Banner -->
+                        <div id="activeBetStatus" class="mt-6 p-4 bg-black border-2 border-amber-500 flex items-center justify-between hidden">
+                            <div class="flex items-center gap-3">
+                                <span class="w-3 h-3 bg-amber-400 animate-ping"></span>
+                                <span class="text-sm font-vt text-gray-200">LOCKED BET: <strong id="lockedBetText" class="text-amber-400">50 SQK on HIGH</strong></span>
+                            </div>
+                            <span class="text-xs font-pixel text-gray-400">WAITING FOR BLOCK...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bet History Ledger Table -->
+                <div class="mt-8 pixel-card p-4">
+                    <h3 class="font-pixel text-xs text-cyan-400 mb-3">ROUND BET HISTORY</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full font-vt text-left text-lg">
+                            <thead>
+                                <tr class="border-b border-slate-800 text-gray-400 text-sm">
+                                    <th class="py-2 px-4">BLOCK</th>
+                                    <th class="py-2 px-4">CHOICE</th>
+                                    <th class="py-2 px-4">RESULT</th>
+                                    <th class="py-2 px-4">WAGER</th>
+                                    <th class="py-2 px-4">PAYOUT</th>
+                                </tr>
+                            </thead>
+                            <tbody id="betHistoryTable">
+                                <!-- Dynamic prediction ledger rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: DYNAMIC SQUEEK NFT EVOLUTION STUDIO -->
+        <div id="view-nft" class="tab-view hidden space-y-6">
+            <div class="pixel-card-gold p-6 md:p-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-xl font-pixel text-purple-400 drop-shadow-[2px_2px_0px_#000]">
+                                DYNAMIC NFT EVOLUTION LAB
+                            </h2>
+                            <span class="px-2 py-0.5 bg-purple-500 text-black font-pixel text-[9px] font-bold">PROOF-OF-DISTANCE</span>
+                        </div>
+                        <p class="text-lg text-gray-300 font-vt mt-1">Squeek NFTs automatically mutate traits as total wheel distance increases!</p>
+                    </div>
+                    <button onclick="exportNftSvg()" class="pixel-btn px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold">
+                        💾 EXPORT VECTOR SVG
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <!-- SVG Avatar Render Container -->
+                    <div class="flex flex-col items-center justify-center p-6 bg-black border-4 border-slate-700 shadow-inner">
+                        <div class="relative w-64 h-64 border-4 border-purple-500 bg-slate-900 flex items-center justify-center p-2">
+                            <svg id="squeekDynamicNft" viewBox="0 0 200 200" class="w-full h-full">
+                                <!-- Background Glow -->
+                                <circle id="nft-layer-aura" cx="100" cy="100" r="85" fill="none" stroke="#a855f7" stroke-width="6" stroke-dasharray="10 6" class="hidden animate-spin-slow"/>
+                                
+                                <!-- Body Base -->
+                                <ellipse cx="100" cy="115" rx="55" ry="48" fill="#f59e0b" stroke="#000" stroke-width="4"/>
+                                <ellipse cx="100" cy="120" rx="35" ry="30" fill="#fef3c7"/>
+                                
+                                <!-- Ears -->
+                                <circle cx="60" cy="70" r="18" fill="#d97706" stroke="#000" stroke-width="4"/>
+                                <circle cx="60" cy="70" r="10" fill="#fbcfe8"/>
+                                <circle cx="140" cy="70" r="18" fill="#d97706" stroke="#000" stroke-width="4"/>
+                                <circle cx="140" cy="70" r="10" fill="#fbcfe8"/>
+                                
+                                <!-- Eyes -->
+                                <circle cx="80" cy="100" r="6" fill="#000"/>
+                                <circle cx="82" cy="98" r="2" fill="#fff"/>
+                                <circle cx="120" cy="100" r="6" fill="#000"/>
+                                <circle cx="122" cy="98" r="2" fill="#fff"/>
+                                
+                                <!-- Nose & Mouth -->
+                                <polygon points="100,108 95,114 105,114" fill="#f43f5e"/>
+                                <path d="M95 116 Q100 122 105 116" fill="none" stroke="#000" stroke-width="3"/>
+                                
+                                <!-- Trait Layer 1: Headband (Tier 2) -->
+                                <g id="nft-layer-headband" class="hidden">
+                                    <rect x="50" y="78" width="100" height="14" fill="#ef4444" stroke="#000" stroke-width="3"/>
+                                    <polygon points="140,80 160,70 155,85" fill="#ef4444" stroke="#000" stroke-width="2"/>
+                                </g>
+
+                                <!-- Trait Layer 2: Golden Crown (Tier 3) -->
+                                <g id="nft-layer-crown" class="hidden">
+                                    <polygon points="65,65 75,35 100,55 125,35 135,65" fill="#fbbf24" stroke="#000" stroke-width="4"/>
+                                    <circle cx="75" cy="40" r="3" fill="#ef4444"/>
+                                    <circle cx="100" cy="58" r="3" fill="#06b6d4"/>
+                                    <circle cx="125" cy="40" r="3" fill="#ef4444"/>
+                                </g>
+
+                                <!-- Trait Layer 3: Laser Eyes (Tier 4) -->
+                                <g id="nft-layer-lasers" class="hidden">
+                                    <line x1="80" y1="100" x2="10" y2="180" stroke="#f43f5e" stroke-width="6"/>
+                                    <line x1="120" y1="100" x2="190" y2="180" stroke="#f43f5e" stroke-width="6"/>
+                                    <line x1="80" y1="100" x2="10" y2="180" stroke="#fff" stroke-width="2"/>
+                                    <line x1="120" y1="100" x2="190" y2="180" stroke="#fff" stroke-width="2"/>
+                                </g>
+                            </svg>
+                        </div>
+
+                        <!-- NFT Card Details -->
+                        <div class="mt-4 text-center">
+                            <h3 id="nftTitle" class="font-pixel text-lg text-amber-400">Genesis Runner</h3>
+                            <p class="font-vt text-sm text-gray-400">DISTANCE TRACKED: <span id="nftMetersText" class="text-cyan-300 font-bold">0 m</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Evolution Progress & Milestones -->
+                    <div class="space-y-4">
+                        <div class="bg-black p-4 border-2 border-slate-700">
+                            <div class="flex justify-between text-xs font-pixel mb-2">
+                                <span class="text-purple-400">EVOLUTION PROGRESS</span>
+                                <span class="text-gray-400">TARGET: 1,000m</span>
+                            </div>
+                            <div class="w-full h-4 bg-slate-900 border border-slate-700 p-0.5">
+                                <div id="nftProgressBar" class="h-full bg-gradient-to-r from-purple-500 to-amber-400 w-0 transition-all duration-500"></div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3 font-vt text-lg">
+                            <div id="tier-card-1" class="p-3 bg-slate-900 border-2 border-slate-700 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl">🐹</span>
+                                    <div>
+                                        <p class="font-pixel text-xs text-amber-400">TIER 1: GENESIS RUNNER</p>
+                                        <p class="text-xs text-gray-400">Base hamster sprite (0m milestone)</p>
+                                    </div>
+                                </div>
+                                <span id="tier-badge-1" class="text-xs font-pixel text-emerald-400">UNLOCKED</span>
+                            </div>
+
+                            <div id="tier-card-2" class="p-3 bg-slate-900 border-2 border-slate-800 flex items-center justify-between opacity-60">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl">🔴</span>
+                                    <div>
+                                        <p class="font-pixel text-xs text-amber-400">TIER 2: HEADBAND HUSTLER</p>
+                                        <p class="text-xs text-gray-400">Unlocks at 200m total distance</p>
+                                    </div>
+                                </div>
+                                <span id="tier-badge-2" class="text-xs font-pixel text-gray-500">LOCKED</span>
+                            </div>
+
+                            <div id="tier-card-3" class="p-3 bg-slate-900 border-2 border-slate-800 flex items-center justify-between opacity-60">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl">👑</span>
+                                    <div>
+                                        <p class="font-pixel text-xs text-amber-400">TIER 3: SQUEEK KING</p>
+                                        <p class="text-xs text-gray-400">Unlocks at 500m total distance</p>
+                                    </div>
+                                </div>
+                                <span id="tier-badge-3" class="text-xs font-pixel text-gray-500">LOCKED</span>
+                            </div>
+
+                            <div id="tier-card-4" class="p-3 bg-slate-900 border-2 border-slate-800 flex items-center justify-between opacity-60">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl">⚡</span>
+                                    <div>
+                                        <p class="font-pixel text-xs text-amber-400">TIER 4: COSMIC ORACLE</p>
+                                        <p class="text-xs text-gray-400">Unlocks at 1,000m + Laser Eyes</p>
+                                    </div>
+                                </div>
+                                <span id="tier-badge-4" class="text-xs font-pixel text-gray-500">LOCKED</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: STREAM OVERLAY & COMPANION HUB -->
+        <div id="view-overlay" class="tab-view hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 md:p-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white">Stream Companion Overlay Suite</h2>
+                        <p class="text-xs text-gray-400">Embed real-time Squeekchain telemetry onto Twitch, YouTube, or OBS scenes.</p>
+                    </div>
+                    <button onclick="copyOverlayUrl()" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2">
+                        📋 Copy OBS Browser Source URL
+                    </button>
+                </div>
+
+                <!-- Live Stream Widget Preview Frame -->
+                <div class="bg-gray-950 rounded-2xl p-6 border border-purple-500/30 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
+                    <div class="absolute top-2 right-2 text-[9px] font-mono bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded border border-purple-500/30">OBS PREVIEW MODE</div>
+                    
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-3xl animate-bounce">
+                            🐹
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                                <h4 class="font-extrabold text-lg text-white">SQUEEKCHAIN LIVE STREAM</h4>
+                            </div>
+                            <p class="text-xs text-amber-400 font-mono">Block #<span id="overlayBlockNum">1048</span> • Distance: <span id="overlayDistance">68</span>m</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4 bg-gray-900/90 px-6 py-3 rounded-xl border border-white/10 font-mono text-xs">
+                        <div class="text-center">
+                            <span class="text-gray-400 block text-[10px]">PREDICTION</span>
+                            <span class="text-cyan-400 font-bold" id="overlayPrediction">HIGH (64%)</span>
+                        </div>
+                        <div class="h-6 w-px bg-gray-800"></div>
+                        <div class="text-center">
+                            <span class="text-gray-400 block text-[10px]">POT</span>
+                            <span class="text-amber-400 font-bold">4,850 SQK</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: HOLDER VAULT & UTILITIES -->
+        <div id="view-vault" class="tab-view hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Staking Vault -->
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-2">Non-Custodial SQK Staking Vault</h3>
+                        <p class="text-xs text-gray-400 mb-6">Stake SQK tokens to earn yield powered by wheel execution fees.</p>
+
+                        <div class="bg-gray-900 p-4 rounded-xl border border-white/5 mb-4">
+                            <div class="flex justify-between text-xs font-mono mb-2">
+                                <span class="text-gray-400">Staked Balance:</span>
+                                <span class="text-amber-400 font-bold" id="stakedVaultAmount">500 SQK</span>
+                            </div>
+                            <div class="flex justify-between text-xs font-mono">
+                                <span class="text-gray-400">APY Yield:</span>
+                                <span class="text-emerald-400 font-bold">18.4% APY</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button onclick="stakeTokens()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition-all">
+                            Stake SQK
+                        </button>
+                        <button onclick="unstakeTokens()" class="w-full py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold rounded-xl text-xs transition-all border border-gray-700">
+                            Unstake
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Trait Merging -->
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-2">Squeek Trait Synthesis</h3>
+                        <p class="text-xs text-gray-400 mb-6">Merge duplicate Squeek NFTs or traits to unlock rare dynamic attributes.</p>
+
+                        <div class="bg-gray-900 p-4 rounded-xl border border-white/5 mb-4 text-center">
+                            <span class="text-3xl block mb-2">🧪</span>
+                            <p class="text-xs text-gray-300 font-medium">Trait Synthesis Chamber Ready</p>
+                            <p class="text-[11px] text-gray-500">Requires 2 unlocked traits & 100 SQK</p>
+                        </div>
+                    </div>
+
+                    <button onclick="synthesizeTraits()" class="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold rounded-xl text-xs transition-all shadow-lg">
+                        Synthesize Traits
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 6: HACKATHON SUBMISSION KIT -->
+        <div id="view-submit" class="tab-view hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 md:p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">
+                            Hackathon Submission Copilot
+                        </h2>
+                        <p class="text-xs text-gray-400 mt-1">Direct submission helper & auto-fill copy tools for your Squeekchain project submission.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-6 text-sm">
+                    
+                    <!-- Wallet Note -->
+                    <div class="bg-amber-500/10 border border-amber-500/30 p-4 rounded-2xl flex items-center justify-between">
+                        <div>
+                            <span class="text-xs font-mono text-amber-400 uppercase font-bold block">Wallet Associated</span>
+                            <span class="font-mono text-xs text-gray-300">0x551a...dc59 (Verified Genesis Profile Wallet)</span>
+                        </div>
+                        <span class="text-xs text-emerald-400 font-bold bg-emerald-500/10 px-2 py-1 rounded">Verified</span>
+                    </div>
+
+                    <!-- Project Name -->
+                    <div class="bg-gray-900/90 p-4 rounded-xl border border-white/10">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-white text-xs">Project Name</span>
+                            <button onclick="copyText('sub-name')" class="text-xs text-amber-400 hover:underline">Copy Field</button>
+                        </div>
+                        <p id="sub-name" class="font-mono text-xs text-amber-300 bg-gray-950 p-2 rounded">Squeekchain Genesis Console & Live Suite</p>
+                    </div>
+
+                    <!-- Site Address -->
+                    <div class="bg-gray-900/90 p-4 rounded-xl border border-white/10">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-white text-xs">Site Address</span>
+                            <button onclick="copyText('sub-site')" class="text-xs text-amber-400 hover:underline">Copy Field</button>
+                        </div>
+                        <p id="sub-site" class="font-mono text-xs text-amber-300 bg-gray-950 p-2 rounded">https://squeekchain.io</p>
+                    </div>
+
+                    <!-- What does it do and how does it use Squeekchain? -->
+                    <div class="bg-gray-900/90 p-4 rounded-xl border border-white/10">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-white text-xs">What does it do, and how does it use Squeekchain?</span>
+                            <button onclick="copyText('sub-desc')" class="text-xs text-amber-400 hover:underline">Copy Field</button>
+                        </div>
+                        <div id="sub-desc" class="font-mono text-xs text-gray-300 bg-gray-950 p-3 rounded space-y-2 whitespace-pre-line leading-relaxed">
+Squeekchain Genesis Console is an all-in-one interactive web app powered by Squeekchain's Proof-of-Distance (PoD) oracle architecture.
+
+Key Features & Squeekchain Integrations:
+1. Proof-of-Distance Wheel Engine: Real-time telemetry simulation of hamster wheel IoT runs powering block confirmation and dynamic difficulty adjustments.
+2. SqueekFi Prediction Markets: Non-custodial prediction betting on block distance outputs (HIGH/LOW runs) with 2x SQK token rewards.
+3. Dynamic Evolving NFTs: SVG Squeek NFTs whose visual traits (Bandanas, Golden Crowns, Laser Eyes) automatically mutate as cumulative hamster distance milestones are reached.
+4. AI Oracle & Narrative Stream: Real-time AI narrative generator logging live story updates per mined block.
+5. Stream Companions: OBS browser overlay widgets displaying live block data and prediction pools for livestreamers.
+6. Holder Vault: Non-custodial SQK staking and trait synthesis chamber for NFT holders.
+                        </div>
+                    </div>
+
+                    <!-- Source Repository -->
+                    <div class="bg-gray-900/90 p-4 rounded-xl border border-white/10">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-white text-xs">Source Code Repository</span>
+                            <button onclick="copyText('sub-repo')" class="text-xs text-amber-400 hover:underline">Copy Field</button>
+                        </div>
+                        <p id="sub-repo" class="font-mono text-xs text-amber-300 bg-gray-950 p-2 rounded">https://github.com/squeekchain-creator/squeekchain-genesis-console</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="glass-card border-t border-white/10 px-4 md:px-8 py-4 text-center text-xs text-gray-500 font-mono">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
+            <p>Squeekchain Mainnet © 2026 • Powered by Hamster Telemetry Engine</p>
+            <p class="text-amber-400/80">Every block is a step forward 🐹</p>
+        </div>
+    </footer>
+
+    <!-- AUDIO SYNTH (Web Audio API for UI SFX) -->
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTone(freq, duration, type='sine') {
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+    </script>
+
+    <!-- APPLICATION LOGIC -->
+    <script>
+        // --- State Management ---
+        const state = {
+            balance: 1250,
+            blockHeight: 1048,
+            lifetimeMeters: 342,
+            lastRunMeters: 68,
+            stakedAmount: 500,
+            
+            isMining: false,
+            autoRun: false,
+            autoRunTimer: null,
+            
+            // Prediction
+            betAmount: 25,
+            activeBet: null, // { amount, choice }
+            history: [],
+
+            // NFT
+            nftTier: 1
+        };
+
+        // --- Tab Switching ---
+        function switchTab(tabId) {
+            playTone(440, 0.05);
+            document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active', 'text-amber-400'));
+            
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            if (activeBtn) activeBtn.classList.add('active');
+        }
+
+        // --- Core Mining / Wheel Engine ---
+        function triggerBlockRun() {
+            if (state.isMining) return;
+            state.isMining = true;
+            playTone(600, 0.1);
+
+            const btn = document.getElementById('mineBlockBtn');
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            // Wheel Animation
+            const rim = document.getElementById('wheelOuterRim');
+            const sprite = document.getElementById('hamsterSprite');
+            rim.classList.replace('animate-spin-slow', 'animate-spin-fast');
+            sprite.classList.add('animate-bounce');
+
+            // Speed gauge animation
+            let speed = 0;
+            const speedInterval = setInterval(() => {
+                speed = Math.min(10, speed + 1.2);
+                document.getElementById('speedValue').textContent = `${speed.toFixed(1)} m/s`;
+                document.getElementById('cadenceValue').textContent = `${Math.floor(speed * 32)} RPM`;
+                document.getElementById('speedProgressBar').style.width = `${speed * 10}%`;
+            }, 200);
+
+            logOracle("Wheel sensor activated. Hamster beginning stride...", "info");
+
+            setTimeout(() => {
+                clearInterval(speedInterval);
+                finishBlockRun();
+            }, 2500);
+        }
+
+        function finishBlockRun() {
+            const distance = Math.floor(Math.random() * 95) + 5; // 5 to 100 meters
+            state.lastRunMeters = distance;
+            state.lifetimeMeters += distance;
+            state.blockHeight++;
+
+            // Reset UI Visuals
+            const rim = document.getElementById('wheelOuterRim');
+            const sprite = document.getElementById('hamsterSprite');
+            rim.classList.replace('animate-spin-fast', 'animate-spin-slow');
+            sprite.classList.remove('animate-bounce');
+
+            document.getElementById('speedValue').textContent = "0.0 m/s";
+            document.getElementById('cadenceValue').textContent = "0 RPM";
+            document.getElementById('speedProgressBar').style.width = "0%";
+
+            document.getElementById('mineBlockBtn').disabled = false;
+            document.getElementById('mineBlockBtn').classList.remove('opacity-50', 'cursor-not-allowed');
+
+            // Narrative Log
+            let moodLog = "";
+            if (distance > 75) moodLog = `🔥 Warp Speed! Hamster sprinted ${distance}m in record cadence!`;
+            else if (distance > 45) moodLog = `⚡ Solid Run! ${distance}m logged on-chain.`;
+            else moodLog = `🐹 Cozy Stroll. ${distance}m covered.`;
+
+            logOracle(`Block #${state.blockHeight} Confirmed: ${moodLog}`, distance > 50 ? 'success' : 'sys');
+
+            // Resolve Bets
+            resolveBets(distance);
+
+            // Check NFT Evolution
+            checkNftEvolution();
+
+            state.isMining = false;
+            updateUI();
+
+            // Auto run loop
+            if (state.autoRun) {
+                state.autoRunTimer = setTimeout(() => {
+                    if (state.autoRun) triggerBlockRun();
+                }, 3000);
+            }
+        }
+
+        function toggleAutoRun() {
+            state.autoRun = !state.autoRun;
+            const dot = document.getElementById('autoRunDot');
+            const text = document.getElementById('autoRunText');
+            
+            if (state.autoRun) {
+                dot.classList.replace('bg-rose-500', 'bg-emerald-400');
+                text.textContent = 'Auto-Mine: ON';
+                logOracle("Auto-mining enabled by operator.", "sys");
+                triggerBlockRun();
+            } else {
+                dot.classList.replace('bg-emerald-400', 'bg-rose-500');
+                text.textContent = 'Auto-Mine: OFF';
+                if (state.autoRunTimer) clearTimeout(state.autoRunTimer);
+                logOracle("Auto-mining paused.", "sys");
+            }
+        }
+
+        function feedTreat() {
+            playTone(800, 0.15);
+            logOracle("🌻 Fed sunflower treat! Hamster energy restored (+20% Speed Boost).", "success");
+            const sprite = document.getElementById('hamsterSprite');
+            sprite.classList.add('scale-125');
+            setTimeout(() => sprite.classList.remove('scale-125'), 400);
+        }
+
+        // --- SqueekFi Predictions Logic ---
+        function setBetAmount(amt) {
+            state.betAmount = amt;
+            document.querySelectorAll('.bet-amt-btn').forEach(btn => {
+                btn.classList.remove('border-cyan-400', 'text-cyan-400', 'bg-gray-700');
+            });
+            const selected = document.getElementById(`bet-${amt}`);
+            if (selected) selected.classList.add('border-cyan-400', 'text-cyan-400', 'bg-gray-700');
+            document.getElementById('estPayoutText').textContent = `${amt * 2} SQK`;
+        }
+
+        function placePrediction(choice) {
+            if (state.activeBet) {
+                alert("You already have an active bet placed for this block!");
+                return;
+            }
+            if (state.balance < state.betAmount) {
+                alert("Insufficient SQK balance!");
+                return;
+            }
+
+            state.balance -= state.betAmount;
+            state.activeBet = { amount: state.betAmount, choice: choice };
+            playTone(520, 0.1);
+
+            document.getElementById('activeBetStatus').classList.remove('hidden');
+            document.getElementById('lockedBetText').textContent = `${state.betAmount} SQK on ${choice.toUpperCase()}`;
+            
+            logOracle(`Locked prediction: ${state.betAmount} SQK on ${choice.toUpperCase()} run.`, 'info');
+            updateUI();
+        }
+
+        function resolveBets(distance) {
+            if (!state.activeBet) return;
+
+            const isHigh = distance >= 50;
+            const won = (state.activeBet.choice === 'high' && isHigh) || (state.activeBet.choice === 'low' && !isHigh);
+
+            const table = document.getElementById('betHistoryTable');
+            const row = document.createElement('tr');
+            
+            if (won) {
+                const payout = state.activeBet.amount * 2;
+                state.balance += payout;
+                playTone(880, 0.2);
+                logOracle(`🎯 PREDICTION WIN! Received +${payout} SQK.`, 'success');
+                row.innerHTML = `
+                    <td class="py-3 px-4">#${state.blockHeight}</td>
+                    <td class="py-3 px-4 text-cyan-400 font-bold">${state.activeBet.choice.toUpperCase()}</td>
+                    <td class="py-3 px-4">${distance}m</td>
+                    <td class="py-3 px-4">${state.activeBet.amount} SQK</td>
+                    <td class="py-3 px-4 text-emerald-400 font-bold">+${payout} SQK (WON)</td>
+                `;
+            } else {
+                playTone(220, 0.2, 'sawtooth');
+                logOracle(`❌ Bet Lost. Distance was ${distance}m.`, 'error');
+                row.innerHTML = `
+                    <td class="py-3 px-4">#${state.blockHeight}</td>
+                    <td class="py-3 px-4 text-cyan-400 font-bold">${state.activeBet.choice.toUpperCase()}</td>
+                    <td class="py-3 px-4">${distance}m</td>
+                    <td class="py-3 px-4">${state.activeBet.amount} SQK</td>
+                    <td class="py-3 px-4 text-rose-400 font-bold">Lost</td>
+                `;
+            }
+
+            if (table) table.insertBefore(row, table.firstChild);
+            state.activeBet = null;
+            const activeBetStatus = document.getElementById('activeBetStatus');
+            if (activeBetStatus) activeBetStatus.classList.add('hidden');
+        }
+
+        // --- Dynamic NFT Logic ---
+        function checkNftEvolution() {
+            let newTier = 1;
+            if (state.lifetimeMeters >= 1000) newTier = 4;
+            else if (state.lifetimeMeters >= 500) newTier = 3;
+            else if (state.lifetimeMeters >= 200) newTier = 2;
+
+            if (newTier > state.nftTier) {
+                state.nftTier = newTier;
+                playTone(700, 0.3);
+                logOracle(`✨ NFT MUTATION UNLOCKED: Tier ${state.nftTier}!`, 'success');
+            }
+            updateNftVisuals();
+        }
+
+        function updateNftVisuals() {
+            const nftMetersText = document.getElementById('nftMetersText');
+            if (nftMetersText) nftMetersText.textContent = `${state.lifetimeMeters} m`;
+            
+            const headband = document.getElementById('nft-layer-headband');
+            const crown = document.getElementById('nft-layer-crown');
+            const lasers = document.getElementById('nft-layer-lasers');
+            const aura = document.getElementById('nft-layer-aura');
+            const nftTitle = document.getElementById('nftTitle');
+
+            // Reset traits
+            if (headband) headband.classList.add('hidden');
+            if (crown) crown.classList.add('hidden');
+            if (lasers) lasers.classList.add('hidden');
+            if (aura) aura.classList.add('hidden');
+
+            if (state.nftTier >= 2) {
+                if (headband) headband.classList.remove('hidden');
+                if (nftTitle) nftTitle.textContent = "Headband Hustler";
+                unlockBadge('tier-card-2', 'tier-badge-2');
+            }
+            if (state.nftTier >= 3) {
+                if (headband) headband.classList.add('hidden');
+                if (crown) crown.classList.remove('hidden');
+                if (nftTitle) nftTitle.textContent = "Squeek King";
+                unlockBadge('tier-card-3', 'tier-badge-3');
+            }
+            if (state.nftTier >= 4) {
+                if (lasers) lasers.classList.remove('hidden');
+                if (aura) aura.classList.remove('hidden');
+                if (nftTitle) nftTitle.textContent = "Cosmic Oracle";
+                unlockBadge('tier-card-4', 'tier-badge-4');
+            }
+
+            // Progress bar calc
+            let pct = Math.min(100, (state.lifetimeMeters / 1000) * 100);
+            const progressBar = document.getElementById('nftProgressBar');
+            if (progressBar) progressBar.style.width = `${pct}%`;
+        }
+
+        function unlockBadge(cardId, badgeId) {
+            const card = document.getElementById(cardId);
+            const badge = document.getElementById(badgeId);
+            if (card && badge) {
+                card.className = "p-3 bg-slate-900 border-2 border-purple-500 flex items-center justify-between opacity-100";
+                badge.className = "text-xs font-pixel text-emerald-400";
+                badge.textContent = "UNLOCKED";
+            }
+        }
+
+        function exportNftSvg() {
+            const nftElem = document.getElementById('squeekDynamicNft');
+            if (!nftElem) return;
+            const svg = nftElem.outerHTML;
+            const blob = new Blob([svg], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `squeek_nft_tier_${state.nftTier}.svg`;
+            a.click();
+            logOracle("Exported SVG NFT vector asset.", "info");
+        }
+
+        // --- Holder Utilities ---
+        function faucetClaim() {
+            state.balance += 250;
+            playTone(800, 0.1);
+            logOracle("Claimed +250 SQK from Genesis Faucet.", "success");
+            updateUI();
+        }
+
+        function stakeTokens() {
+            if (state.balance < 100) {
+                alert("Minimum 100 SQK to stake!");
+                return;
+            }
+            state.balance -= 100;
+            state.stakedAmount += 100;
+            playTone(600, 0.1);
+            logOracle("Staked 100 SQK into yield vault.", "success");
+            updateUI();
+        }
+
+        function unstakeTokens() {
+            if (state.stakedAmount <= 0) return;
+            state.balance += state.stakedAmount;
+            logOracle(`Unstaked ${state.stakedAmount} SQK.`, "sys");
+            state.stakedAmount = 0;
+            updateUI();
+        }
+
+        function synthesizeTraits() {
+            playTone(900, 0.2);
+            logOracle("Synthesized 2 traits into Rare Golden Whiskers!", "success");
+        }
+
+        function copyOverlayUrl() {
+            document.execCommand('copy');
+            alert("OBS Overlay Source URL copied to clipboard!");
+        }
+
+        function copyText(id) {
+            const txt = document.getElementById(id).innerText;
+            const el = document.createElement('textarea');
+            el.value = txt;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            playTone(600, 0.05);
+            alert("Copied to clipboard!");
+        }
+
+        // --- Logging & UI Updates ---
+        function logOracle(msg, type = 'sys') {
+            const feed = document.getElementById('oracleLogFeed');
+            const div = document.createElement('div');
+            
+            let colorClass = 'text-gray-400';
+            if (type === 'success') colorClass = 'text-emerald-400 font-bold';
+            if (type === 'error') colorClass = 'text-rose-400 font-bold';
+            if (type === 'info') colorClass = 'text-cyan-300';
+
+            const timestamp = new Date().toLocaleTimeString('en-US', { hour12: false });
+            div.className = `${colorClass} flex items-start gap-2`;
+            div.innerHTML = `<span class="text-gray-600 font-mono">[${timestamp}]</span> <span>${msg}</span>`;
+            
+            feed.insertBefore(div, feed.firstChild);
+            if (feed.children.length > 25) feed.removeChild(feed.lastChild);
+        }
+
+        function clearLogs() {
+            document.getElementById('oracleLogFeed').innerHTML = '';
+        }
+
+        function updateUI() {
+            const sqkBalance = document.getElementById('sqkBalance');
+            if (sqkBalance) sqkBalance.textContent = state.balance.toLocaleString();
+            
+            const blockHeight = document.getElementById('blockHeight');
+            if (blockHeight) blockHeight.textContent = `#${state.blockHeight.toLocaleString()}`;
+            
+            const lifetimeMeters = document.getElementById('lifetimeMeters');
+            if (lifetimeMeters) lifetimeMeters.textContent = state.lifetimeMeters;
+            
+            const wheelRotations = document.getElementById('wheelRotations');
+            if (wheelRotations) wheelRotations.textContent = (state.lifetimeMeters * 3.3).toFixed(0);
+            
+            const lastRunMeters = document.getElementById('lastRunMeters');
+            if (lastRunMeters) lastRunMeters.textContent = state.lastRunMeters;
+            
+            const stakedVaultAmount = document.getElementById('stakedVaultAmount');
+            if (stakedVaultAmount) stakedVaultAmount.textContent = `${state.stakedAmount} SQK`;
+
+            // Stream overlay sync
+            const overlayBlockNum = document.getElementById('overlayBlockNum');
+            if (overlayBlockNum) overlayBlockNum.textContent = state.blockHeight;
+            
+            const overlayDistance = document.getElementById('overlayDistance');
+            if (overlayDistance) overlayDistance.textContent = state.lastRunMeters;
+
+            updateNftVisuals();
+        }
+
+        // --- Init ---
+        window.onload = () => {
+            logOracle("Squeekchain Genesis Node online.", "sys");
+            logOracle("Proof-of-Distance IoT Sensors calibrated.", "info");
+            setBetAmount(25);
+            updateUI();
+        };
+    </script>
+</body>
+</html>
